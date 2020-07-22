@@ -15,6 +15,7 @@ void *sub_reactor(void *arg) {
     }
     struct epoll_event ev, events[MAX];
     while (1) {
+        DBG(RED"Sub Reactor " NONE": Epoll Waiting...\n");
         int nfds = epoll_wait(taskQueue->epollfd, events, MAX, -1);
         if (nfds < 0) {
             perror("epoll_wait()");
@@ -24,6 +25,7 @@ void *sub_reactor(void *arg) {
             struct User *user = (struct User *)events[i].data.ptr;
             if (events[i].events & EPOLLIN) {
                 task_queue_push(taskQueue, user);
+                DBG(RED"Sub Reactor " NONE": %s Ready\n", user->name);
             }
         }
     }

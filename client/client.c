@@ -14,6 +14,11 @@ char *conf = "./football.conf";
 int sockfd = -1;
 char conf_ans[512] = {0};
 
+struct Map court;//球场大小，你应该在server.c和client.c中定义该变量，并初始化
+WINDOW *Football, *Football_t, *Message, *Help, *Score, *Write;//窗体
+struct Bpoint ball;  //球的位置
+struct BallStatus ball_status;
+
 int main(int argc, char **argv) {
     int opt;
     struct LogRequest request;
@@ -21,6 +26,11 @@ int main(int argc, char **argv) {
 
     bzero(&request, sizeof(request));
     bzero(&response, sizeof(response));
+
+    bzero(&court, sizeof(court));
+    bzero(&ball, sizeof(ball));
+    bzero(&ball_status, sizeof(ball_status));
+
     while ((opt = getopt(argc, argv, "h:p:t:m:n:")) != -1) {
         switch (opt) {
             case 't':
@@ -49,12 +59,22 @@ int main(int argc, char **argv) {
     if (!strlen(request.name)) strcpy(request.name, get_conf_value(conf, "NAME"));
     if (!strlen(request.msg)) strcpy(request.msg, get_conf_value(conf, "LOGMSG"));
     
-
+/*
     printf("port: %d\n", server_port);
     printf("team: %d\n", request.team);
     printf("ip: %s\n", server_ip);
     printf("name: %s\n", request.name);
     printf("msg: %s\n", request.msg);
+*/
+
+
+    //初始化
+    court.height = atoi(get_conf_value(conf, "LINES"));
+    court.width = atoi(get_conf_value(conf, "COLS"));
+    court.start.x = 3;
+    court.start.y = 2;
+
+    initfootball();
 
     struct sockaddr_in server;
     server.sin_family = AF_INET;
@@ -67,14 +87,15 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-
     sendto(sockfd, (void *)&request, sizeof(request), 0, (struct sockaddr *)&server, len);
     fd_set set;
     FD_ZERO(&set);
     FD_SET(sockfd, &set);
+
     struct timeval tv;
     tv.tv_sec = 5;
     tv.tv_usec = 0;
+    
     int retval = select(sockfd + 1, &set, NULL, NULL, &tv);
     if (retval < 0) {
         perror("select");
@@ -90,9 +111,18 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    printf("Server : %s\n", response.msg);
+    printf("Server : %s", response.msg);
     connect(sockfd, (struct sockaddr *)&server, len);
     //是否需要更多的逻辑或者数据传输来测试，请自己决定，如果需要，在服务端，应该用多线程
+    while (1) {
+        char buff[512] = {0};
+        scanf("%[^\n]s", buff);
+        getchar();
+        send(sockfd, buff, strlen(buff), 0);
+        recv(sockfd, buff, sizeof(buff), 0);
+        printf("Server : %s\n", buff);
+    }
+
     return 0;
 }
 

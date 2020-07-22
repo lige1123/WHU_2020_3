@@ -25,6 +25,7 @@ void task_queue_push(struct task_queue *taskQueue,struct User *user) {
     }
     taskQueue->team[taskQueue->tail] = user;
     taskQueue->total++;
+    DBG(YELLOW"Thread Poll " NONE": Task Push %s\n", user->name);
     if(++taskQueue->tail == taskQueue->size) {
         taskQueue->tail = 0;
     }
@@ -35,9 +36,11 @@ void task_queue_push(struct task_queue *taskQueue,struct User *user) {
 struct User *task_queue_pop(struct task_queue *taskQueue) {
     pthread_mutex_lock(&taskQueue->mutex);
     while (taskQueue->tail == taskQueue->head) {
+        DBG(YELLOW"Thread Poll " NONE": Task Queue Empty, Waiting For Task.\n");
         pthread_cond_wait(&taskQueue->cond, &taskQueue->mutex);
     }
     struct User *user = taskQueue->team[taskQueue->head];
+    DBG(YELLOW"Thread Poll " NONE": Task Pop %s\n", user->name);
     if (++taskQueue->head == taskQueue->size) {
         taskQueue->head = 0;
     }
@@ -46,11 +49,17 @@ struct User *task_queue_pop(struct task_queue *taskQueue) {
 }
 
 void do_with(struct User *user) {
-    char buff[512] = {0};
-    recv(user->fd, buff, sizeof(buff), 0);
-    printf("Recv: %s\n", buff);
-    send(user->fd, buff, strlen(buff), 0);
-    bzero(buff, sizeof(buff));
+    struct FootBallMsg msg;
+    recv(user->fd, (void *)&msg, sizeof(msg), 0);
+    if (msg.type & FT_FIN) {
+
+    } else if (msg.type & FT_MSG) {
+
+    } else if (msg.type & FT_WALL) {
+        
+    } else if (msg.type & FT_ACK) {
+
+    }
 }
 
 void *thread_run(void *arg) {

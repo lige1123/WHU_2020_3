@@ -14,6 +14,6 @@ void del_event(int epollfd, int fd);
 int udp_connect(struct sockaddr_in *client);
 int udp_accept(int fd, struct User *user);
 void add_to_sub_reactor(struct User *user);
-
+int check_online(struct LogRequest *request);
 
 #endif
