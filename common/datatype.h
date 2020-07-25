@@ -59,7 +59,7 @@ struct Speed {          //球的速度
 struct BallStatus {     //球的状态
     struct Speed v;
     struct Aspeed a;
-    int by_time;
+    int by_team;
     char name[20];
     //pthread_mutex_t mutex;
 };
@@ -73,7 +73,7 @@ struct Score {          //比分信息
 #define ACTION_KICK 0x01    //踢球  
 #define ACTION_CARRY 0x02   //带球
 #define ACTION_STOP 0x04    //停球
-#define ACTION_DFL 0x08     //默认
+#define ACTION_DFT 0x08     //默认
 
 struct Ctl {            //控制信息
     int action;         //动作
@@ -102,6 +102,7 @@ struct FootBallMsg {
     int team;
     char name[20];
     char msg[MAX_MSG];
+    struct Ctl ctl;
 };
 
 #endif

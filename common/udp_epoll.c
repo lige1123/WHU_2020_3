@@ -15,12 +15,11 @@ extern int repollfd, bepollfd;
 void add_event_ptr(int epollfd, int fd, int events, struct User *user) {
     struct epoll_event ev;
     ev.events = events;
-    ev.data.ptr =(void *)user;
+    ev.data.ptr = (void *)user;
     if (epoll_ctl(epollfd, EPOLL_CTL_ADD,fd, &ev) < 0) {
         perror("epoll_ctl()");
         exit(1);
     }
-    return ;
 }
 
 void del_event(int epollfd, int fd) {
@@ -28,18 +27,17 @@ void del_event(int epollfd, int fd) {
         perror("epoll_ctl()");
         exit(1);
     }
-    return ;
 }
 
 int udp_connect(struct sockaddr_in *client) {
     int sockfd;
     if ((sockfd = socket_create_udp(port)) < 0) {
         perror("socket_create_udp()");
-        exit(1);
+        return -1;
     }
     if ((connect(sockfd, (struct sockaddr *)client, sizeof(struct sockaddr))) < 0) {
         perror("connect()");
-        exit(1);
+        return -1;
     }
     return sockfd;
 }
@@ -91,16 +89,20 @@ int find_sub(struct User *team) {
 
 void add_to_sub_reactor(struct User *user) {
     struct User *team = (user->team ? bteam : rteam);
-    if (user->team) pthread_mutex_lock(&bmutex);
-    else pthread_mutex_lock(&rmutex);
+    if (user->team) 
+        pthread_mutex_lock(&bmutex);
+    else 
+        pthread_mutex_lock(&rmutex);
 
     int sub = find_sub(team);
     if (sub < 0) return ;
     team[sub] = *user;
     team[sub].online = 1;
     team[sub].flag = 10;
-    if (user->team) pthread_mutex_unlock(&bmutex);
-    else pthread_mutex_unlock(&rmutex);
+    if (user->team) 
+        pthread_mutex_unlock(&bmutex);
+    else 
+        pthread_mutex_unlock(&rmutex);
 
     DBG("Add to sub reactor %s\n", team[sub].name);
     

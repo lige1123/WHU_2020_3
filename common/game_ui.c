@@ -12,6 +12,45 @@ extern WINDOW *Football, *Football_t, *Message, *Help, *Score, *Write;//窗体
 extern struct Bpoint ball;  //球的位置
 extern struct BallStatus ball_status;
 
+extern int message_num; //server.c 和 client.c中定义，初始化
+
+void show_message(WINDOW *win, struct User *user, char *msg, int type) {
+    time_t time_now = time(NULL);
+    struct tm* tm = localtime(&time_now);
+    char timestr[20] = {0};
+    char username[80] = {0};
+    sprintf(timestr, "%02d:%02d:%02d ", tm->tm_hour, tm->tm_min, tm->tm_sec);
+    if (type) {
+        wattron(win, COLOR_PAIR(4));
+        strcpy(username, "Server Info : ");    
+    } else {
+        if (user->team)
+            wattron(win, COLOR_PAIR(6));
+        else
+            wattron(win, COLOR_PAIR(2));
+        sprintf(username, "%s : ", user->name);
+        wattron(win, COLOR_PAIR(3));   
+    }
+
+    if (message_num <= 4) {
+        w_gotoxy_puts(win, 10, message_num, username);
+        wattron(win, COLOR_PAIR(3));
+        w_gotoxy_puts(win, 10 + strlen(username), message_num, msg);
+        wattron(win, COLOR_PAIR(5));
+        w_gotoxy_puts(win, 1, message_num, timestr);
+        message_num++;   
+    } else {
+        message_num = 4;
+        scroll(win);
+        w_gotoxy_puts(win, 10, message_num, username);
+        wattron(win, COLOR_PAIR(3));
+        w_gotoxy_puts(win, 10 + strlen(username), message_num, msg);
+        wattron(win, COLOR_PAIR(5));
+        w_gotoxy_puts(win, 1, message_num, timestr);
+        message_num++;    
+    }
+    wrefresh(win);
+}
 
 WINDOW *create_newwin(int width, int heigth, int startx, int starty) {
     WINDOW *win;
@@ -78,7 +117,7 @@ void initfootball() {
     init_pair(11, COLOR_BLACK, COLOR_BLUE);
     init_pair(12, COLOR_BLACK, COLOR_YELLOW);
     Football_t = create_newwin(court.width + 4, court.height + 2, court.start.x - 2, court.start.y - 1);
-    //Football = create_newwin(court.width + 4, court.heigth + 4, court.start.x - 2, court.start.y - 2);
+    //Football = create_newwin(court.width + 4, court.height + 4, court.start.x - 2, court.start.y - 2);
     Football = subwin(Football_t, court.height, court.width, court.start.x, court.start.y);
     WINDOW *Message_t = create_newwin(court.width + 4, 7,  court.start.x - 2, court.start.y + court.height + 1);
     Message = subwin(Message_t, 5, court.width + 2, court.start.y + court.height + 2 , court.start.x - 1);

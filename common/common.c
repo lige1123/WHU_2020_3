@@ -28,7 +28,7 @@ char *get_conf_value(const char *path, const char *key) {
             }
         } 
     }
-    
+    DBG(GREEN"get_conf_value %s "NONE": %s\n", key, conf_ans); 
     free(line);
     fclose(fp);
     return conf_ans;
@@ -77,14 +77,5 @@ int socket_udp() {
     }
     return sockfd;
 }
-
-
-/*
-char conf_ans[512];
-int main() {
-    char *name = get_conf_value("../client/football.conf", "NAME");
-    printf("%s\n%ld\n", name, strlen(name));
-}
-*/
 
 

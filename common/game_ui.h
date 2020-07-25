@@ -8,6 +8,8 @@
 #ifndef _GAME_UI_H
 #define _GAME_UI_H
 
+
+void show_message(WINDOW *win, struct User *user, char *msg, int type);
 WINDOW *create_newwin(int width, int heigth, int startx, int starty);
 void destroy_win(WINDOW *win);
 void gotoxy(int x, int y);

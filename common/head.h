@@ -37,17 +37,33 @@
 #include <string.h>
 #include <sys/epoll.h>
 #include <ncurses.h>
+#include <math.h>
+#include <locale.h>
 
 #include "common.h"
-#include "datatype.h"
-#include "udp_epoll.h"
-#include "thread_pool.h"
-#include "sub_reactor.h"
 #include "color.h"
+#include "datatype.h"
+#include "thread_pool.h"
+#include "udp_epoll.h"
+#include "sub_reactor.h"
 #include "game_ui.h"
+#include "heart_beat.h"
+#include "server_re_draw.h"
+#include "ball_status.h"
+#include "show_data_stream.h"
+#include "show_strength.h"
+#include "server_exit.h"
+#include "server_send_all.h"
+#include "client_recv.h"
+#include "client_exit.h"
+#include "send_ctl.h"
+#include "send_chat.h"
 
 #define MAX 20
 #define NWORKER 5
+
+//#define Show_Message(a, b, c, d) show_message(#a##Message, #b, #c, #d##0)
+
 
 #ifdef _D
 #define DBG(fmt, args...) printf(fmt, ##args)
