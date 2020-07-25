@@ -159,7 +159,7 @@ int main(int argc, char **argv) {
                 ctl_msg.ctl.diry -= 1;
                 break;
             case 's':
-                ctl_msg.ctl.diry -= 1;
+                ctl_msg.ctl.diry += 1;
                 break;
             case 13:
                 send_chat();

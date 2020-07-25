@@ -40,11 +40,12 @@ void task_queue_push(struct task_queue *taskQueue,struct User *user) {
 
 struct User *task_queue_pop(struct task_queue *taskQueue) {
     pthread_mutex_lock(&taskQueue->mutex);
-    while (taskQueue->tail == taskQueue->head) {
+    while (taskQueue->total == 0) {
         DBG(YELLOW"Thread Poll " NONE": Task Queue Empty, Waiting For Task.\n");
         pthread_cond_wait(&taskQueue->cond, &taskQueue->mutex);
     }
     struct User *user = taskQueue->team[taskQueue->head];
+    taskQueue->total--;
     DBG(YELLOW"Thread Poll " NONE": Task Pop %s\n", user->name);
     if (++taskQueue->head == taskQueue->size) {
         taskQueue->head = 0;

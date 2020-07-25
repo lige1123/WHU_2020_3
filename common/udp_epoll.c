@@ -99,6 +99,8 @@ void add_to_sub_reactor(struct User *user) {
     team[sub] = *user;
     team[sub].online = 1;
     team[sub].flag = 10;
+    team[sub].loc.x = 56 + 2 * sub;
+    team[sub].loc.y = 25;
     if (user->team) 
         pthread_mutex_unlock(&bmutex);
     else 

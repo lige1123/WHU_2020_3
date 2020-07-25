@@ -50,6 +50,8 @@ int main(int argc, char **argv) {
     court.width = atoi(get_conf_value(conf, "COLS"));
     court.start.x = 3;
     court.start.y = 3;
+    ball.x = court.width / 2;
+    ball.y = court.height / 2;
     //printf("w:%d\nh:%d\n", court.width, court.height);
     setlocale(LC_ALL, "");
 #ifndef _D

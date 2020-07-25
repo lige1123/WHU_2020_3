@@ -33,50 +33,48 @@ void re_draw_ball() {
         } else {
             ball.x += (ball_status.v.x * t + ball_status.a.x * pow(t, 2) / 2);
             ball_status.v.x += ball_status.a.x * t;
-            ball.y += (ball_status.v.y * t + ball_status.a.y * pow(t, 2) / 2);
+            ball.y += (ball_status.v.y * t / 2 + ball_status.a.y * pow(t, 2) / 4);
             ball_status.v.y += ball_status.a.y * t;
             if (ball.x >= court.width || ball.x <= 0 || ball.y >= court.height || ball.y <= 0) {
                 if (ball.x >= court.width - 1) {
-                    if (ball.x >= court.width - 1) {
-                        if (ball.y >= court.height / 2 - 3 && ball.y <= court.height / 2 + 3) {
-                            score.red++;
-                            ball.x = court.width - 3;
-                            ball. y = court.height / 2;
-                            struct FootBallMsg msg;
-                            msg.type = FT_WALL;
-                            sprintf(msg.msg, "%s of %s team, get 1 score", ball_status.name, ball_status.by_team ? "blue" : "red");
-                            send_all(&msg);
-                        }
-                        ball.x = court.width - 1;
+                    if (ball.y >= court.height / 2 - 3 && ball.y <= court.height / 2 + 3) {
+                        score.red++;
+                        ball.x = court.width - 3;
+                        ball. y = court.height / 2;
+                        struct FootBallMsg msg;
+                        msg.type = FT_WALL;
+                        sprintf(msg.msg, "%s of %s team, get 1 score", ball_status.name, ball_status.by_team ? "blue" : "red");
+                        send_all(&msg);
                     }
-                    if (ball.x <= 0) {
-                        if (ball.y >= court.height / 2 - 3 && ball.y <= court.height / 2 + 3) {
-                            score.blue++;
-                            ball.x = 2;
-                            ball.y = court.height / 2;
-                            struct FootBallMsg msg;
-                            msg.type = FT_WALL;
-                            sprintf(msg.msg, "%s of %s team, get 1 score", ball_status.name, ball_status.by_team ? "blue" : "red");
-                            send_all(&msg);
-                        }
-                        ball.x = 0;
-                    }
-                    if (ball.y >= court.height) ball.y = court.height - 1;
-                    if (ball.y <= 0) ball.y = 0;
-                    bzero(&ball_status.v, sizeof(ball_status.v));
-                    bzero(&ball_status.a, sizeof(ball_status.a));
+                    ball.x = court.width - 1;
                 }
+                if (ball.x <= 0) {
+                    if (ball.y >= court.height / 2 - 3 && ball.y <= court.height / 2 + 3) {
+                        score.blue++;
+                        ball.x = 2;
+                        ball.y = court.height / 2;
+                        struct FootBallMsg msg;
+                        msg.type = FT_WALL;
+                        sprintf(msg.msg, "%s of %s team, get 1 score", ball_status.name, ball_status.by_team ? "blue" : "red");
+                        send_all(&msg);
+                    }
+                    ball.x = 0;
+                }
+                if (ball.y >= court.height) ball.y = court.height - 1;
+                if (ball.y <= 0) ball.y = 0;
+                bzero(&ball_status.v, sizeof(ball_status.v));
+                bzero(&ball_status.a, sizeof(ball_status.a));   
             }
         }
     }
     w_gotoxy_putc(Football, (int)ball.x, (int)ball.y, 'o');
     if (ball_status.by_team) {
-        wattron(Football, COLOR_PAIR(6));
+        wattron(Football_t, COLOR_PAIR(6));
     } else {
-        wattron(Football, COLOR_PAIR(2));
+        wattron(Football_t, COLOR_PAIR(2));
     }
     w_gotoxy_putc(Football, (int)ball.x + 1, (int)ball.y, '`');
-    wattron(Football, COLOR_PAIR(3));
+    wattron(Football_t, COLOR_PAIR(3));
 }
 
 //根据team，切换颜色
